@@ -13,10 +13,13 @@ export default class App extends Component {
     super(props);
     this.handleJoin = this.handleJoin.bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.handleConnected = this.handleConnected.bind(this);
+    this.handleDisconnected = this.handleDisconnected.bind(this);
     this.state = {
       playerId: null,
       name: null,
       loading: true,
+      connected: false,
     };
   }
 
@@ -42,6 +45,14 @@ export default class App extends Component {
     this.setState({ playerId: null, name: null });
   }
 
+  handleConnected() {
+    this.setState({ connected: true });
+  }
+
+  handleDisconnected() {
+    this.setState({ connected: false });
+  }
+
   async getPlayer(id) {
     const resp = await fetch(`game/player/${id}`);
     let player = null;
@@ -53,8 +64,8 @@ export default class App extends Component {
 
   render() {
     return (
-      <Layout>
-        <SignalR />
+      <Layout connected={this.state.connected}>
+        <SignalR onConnect={this.handleConnected} onDisconnect={this.handleDisconnected} />
         <Route
           exact
           path='/'

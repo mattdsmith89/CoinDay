@@ -8,7 +8,7 @@ export class Layout extends Component {
   render () {
     return (
       <div className="d-flex flex-column h-100">
-        <NavMenu />
+        <NavMenu connected={this.props.connected} />
         <Container className="flex-fill">
           {this.props.children}
         </Container>

@@ -28,9 +28,11 @@ export class SignalR extends PureComponent {
     }
 
     this.connection.on("Message", this.onMessage);
+    this.connection.onclose(() => this.props.onDisconnect());
 
     await this.connection.start();
     this.connected = true;
+    this.props.onConnect();
   }
 
   componentWillUnmount() {
