@@ -1,3 +1,5 @@
+using CoinDay.Hubs;
+using CoinDay.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -20,8 +22,9 @@ namespace CoinDay
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllersWithViews();
+            services.AddSignalR();
+            services.AddSingleton<GameService>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -55,6 +58,7 @@ namespace CoinDay
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<GameHub>("/gamehub");
             });
 
             app.UseSpa(spa =>
