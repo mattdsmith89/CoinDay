@@ -16,7 +16,7 @@ export class Home extends Component {
       <div>
         <h1>Home</h1>
         <p>
-          Hello, {this.props.name}.
+          Hello, {this.props.name}. Welcome to CoinDay!
         </p>
         <Button color="secondary" size="sm" onClick={this.handleClick}>
           Not {this.props.name}?
