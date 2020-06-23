@@ -21,7 +21,7 @@ jobs:
         echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag docker.pkg.github.com/mattdsmith89/coinday/coinday-test:${{ steps.vars.outputs.sha_short }}
+      run: docker build . --file Dockerfile --tag docker.pkg.github.com/mattdsmith89/coinday/coinday:${{ steps.vars.outputs.sha_short }}
     - name: Docker Login
       uses: azure/docker-login@v1
       with:
@@ -29,4 +29,4 @@ jobs:
         username: $GITHUB_ACTOR
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Push the image
-      run: docker push docker.pkg.github.com/mattdsmith89/coinday/coinday-test:${{ steps.vars.outputs.sha_short }}
+      run: docker push docker.pkg.github.com/mattdsmith89/coinday/coinday:${{ steps.vars.outputs.sha_short }}
