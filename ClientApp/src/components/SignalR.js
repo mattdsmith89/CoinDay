@@ -40,6 +40,12 @@ export class SignalR extends PureComponent {
   }
 
   onMessage(message) {
-    console.log(message);
+    switch(message.name) {
+      case "NewRoom":
+        this.props.onNewRoom();
+        break;
+      default:
+        console.log("Unknown message", message);
+    }
   }
 }

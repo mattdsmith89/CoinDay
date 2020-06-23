@@ -5,14 +5,14 @@ namespace CoinDay.Models
 {
     public class Player
     {
-        public Player(PlayerId id, string name)
+        public Player(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
             }
 
-            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = PlayerId.NewId();
             Name = name;
         }
 

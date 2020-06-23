@@ -15,8 +15,11 @@ export default class App extends Component {
     this.handleClear = this.handleClear.bind(this);
     this.handleConnected = this.handleConnected.bind(this);
     this.handleDisconnected = this.handleDisconnected.bind(this);
+    this.handleCreateRoom = this.handleCreateRoom.bind(this);
+    this.handleNewRoom = this.handleNewRoom.bind(this);
     this.state = {
       playerId: null,
+      rooms: null,
       name: null,
       loading: true,
       connected: false,
@@ -27,10 +30,11 @@ export default class App extends Component {
     const storage = window.localStorage;
     const playerId = storage.getItem("playerId");
     const player = await this.getPlayer(playerId);
+    const rooms = await this.getRooms();
     if (player) {
       this.setState({ playerId: player.id, name: player.name });
     }
-    this.setState({ loading: false });
+    this.setState({ rooms, loading: false });
   }
 
   handleJoin({ id, name }) {
@@ -43,6 +47,15 @@ export default class App extends Component {
     const storage = window.localStorage;
     storage.removeItem("playerId");
     this.setState({ playerId: null, name: null });
+  }
+
+  handleCreateRoom() {
+    this.createRoom(this.state.playerId);
+  }
+
+  async handleNewRoom() {
+    const rooms = await this.getRooms();
+    this.setState({ rooms });
   }
 
   handleConnected() {
@@ -62,10 +75,35 @@ export default class App extends Component {
     return player;
   }
 
+  async getRooms() {
+    const resp = await fetch("game/room");
+    let rooms = [];
+    if (resp.ok) {
+      rooms = await resp.json();
+    }
+    return rooms;
+  }
+
+  async createRoom(playerId) {
+    const resp = await fetch("game/room", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ playerId }),
+    });
+    if (resp.ok) {
+      this.setState({ rooms: [...this.state.rooms, await resp.json()] });
+    }
+  }
+
   render() {
     return (
       <Layout connected={this.state.connected}>
-        <SignalR onConnect={this.handleConnected} onDisconnect={this.handleDisconnected} />
+        <SignalR 
+          onConnect={this.handleConnected} 
+          onDisconnect={this.handleDisconnected}
+          onNewRoom={this.handleNewRoom} />
         <Route
           exact
           path='/'
@@ -73,7 +111,12 @@ export default class App extends Component {
             return this.state.loading
               ? <Loading />
               : this.state.playerId
-                ? <Home name={this.state.name} onClearPlayer={this.handleClear} />
+                ? <Home 
+                    name={this.state.name} 
+                    playerId={this.state.playerId}
+                    rooms={this.state.rooms}
+                    onClearPlayer={this.handleClear}
+                    onCreateRoom={this.handleCreateRoom} />
                 : <Join onJoin={this.handleJoin} />
           }}
         />

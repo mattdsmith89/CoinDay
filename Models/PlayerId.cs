@@ -15,11 +15,14 @@ namespace CoinDay.Models
 
             _value = value;
         }
+
+        public static PlayerId NewId() => new PlayerId(Guid.NewGuid().ToString());
+
         public static implicit operator string(PlayerId playerId) => playerId._value;
 
         public override string ToString() => _value.ToString();
 
-        public override bool Equals(object obj) => 
+        public override bool Equals(object obj) =>
             obj is PlayerId id && _value == id._value;
 
         public override int GetHashCode() => HashCode.Combine(_value);
