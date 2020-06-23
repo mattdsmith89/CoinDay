@@ -1,5 +1,4 @@
-name: Build Test Image
-
+name: Build and Publish
 on:
   push:
     branches: [ main ]
