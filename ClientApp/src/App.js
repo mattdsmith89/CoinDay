@@ -15,11 +15,11 @@ export default class App extends Component {
     this.handleClear = this.handleClear.bind(this);
     this.handleConnected = this.handleConnected.bind(this);
     this.handleDisconnected = this.handleDisconnected.bind(this);
-    this.handleCreateRoom = this.handleCreateRoom.bind(this);
-    this.handleNewRoom = this.handleNewRoom.bind(this);
+    this.handleCreateGame = this.handleCreateGame.bind(this);
+    this.handleNewGameCreated = this.handleNewGameCreated.bind(this);
     this.state = {
       playerId: null,
-      rooms: null,
+      games: null,
       name: null,
       loading: true,
       connected: false,
@@ -30,11 +30,11 @@ export default class App extends Component {
     const storage = window.localStorage;
     const playerId = storage.getItem("playerId");
     const player = await this.getPlayer(playerId);
-    const rooms = await this.getRooms();
+    const games = await this.getGames();
     if (player) {
       this.setState({ playerId: player.id, name: player.name });
     }
-    this.setState({ rooms, loading: false });
+    this.setState({ games, loading: false });
   }
 
   handleJoin({ id, name }) {
@@ -49,13 +49,13 @@ export default class App extends Component {
     this.setState({ playerId: null, name: null });
   }
 
-  handleCreateRoom() {
-    this.createRoom(this.state.playerId);
+  handleCreateGame() {
+    this.createGame(this.state.playerId);
   }
 
-  async handleNewRoom() {
-    const rooms = await this.getRooms();
-    this.setState({ rooms });
+  async handleNewGameCreated() {
+    const games = await this.getGames();
+    this.setState({ games });
   }
 
   handleConnected() {
@@ -75,17 +75,17 @@ export default class App extends Component {
     return player;
   }
 
-  async getRooms() {
-    const resp = await fetch("game/room");
-    let rooms = [];
+  async getGames() {
+    const resp = await fetch("game");
+    let games = [];
     if (resp.ok) {
-      rooms = await resp.json();
+      games = await resp.json();
     }
-    return rooms;
+    return games;
   }
 
-  async createRoom(playerId) {
-    const resp = await fetch("game/room", {
+  async createGame(playerId) {
+    const resp = await fetch("game", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -93,7 +93,7 @@ export default class App extends Component {
       body: JSON.stringify({ playerId }),
     });
     if (resp.ok) {
-      this.setState({ rooms: [...this.state.rooms, await resp.json()] });
+      this.setState({ games: [...this.state.games, await resp.json()] });
     }
   }
 
@@ -103,7 +103,7 @@ export default class App extends Component {
         <SignalR 
           onConnect={this.handleConnected} 
           onDisconnect={this.handleDisconnected}
-          onNewRoom={this.handleNewRoom} />
+          onNewGame={this.handleNewGameCreated} />
         <Route
           exact
           path='/'
@@ -114,9 +114,9 @@ export default class App extends Component {
                 ? <Home 
                     name={this.state.name} 
                     playerId={this.state.playerId}
-                    rooms={this.state.rooms}
+                    games={this.state.games}
                     onClearPlayer={this.handleClear}
-                    onCreateRoom={this.handleCreateRoom} />
+                    onCreateGame={this.handleCreateGame} />
                 : <Join onJoin={this.handleJoin} />
           }}
         />

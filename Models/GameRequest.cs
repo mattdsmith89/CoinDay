@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CoinDay.Models
 {
-    public class RoomRequest
+    public class GameRequest
     {
         [Required]
         public string PlayerId { get; set; }

@@ -18,33 +18,33 @@ namespace CoinDay.Controllers
             this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
         }
 
+        [HttpGet()]
+        public IActionResult GetGames()
+        {
+            return Ok(gameService.Games.Select(game => game.ToApiObject()));
+        }
+
+        [HttpPost()]
+        public async Task<IActionResult> NewGame(GameRequest request)
+        {
+            var game = await gameService.NewGame(new PlayerId(request.PlayerId));
+            if (game is null) return NotFound();
+            return Ok(game.ToApiObject());
+        }
+
+        [HttpPost("player")]
+        public async Task<IActionResult> NewPlayer(PlayerRequest request)
+        {
+            var player = await gameService.NewPlayer(request.Name);
+            return Ok(player.ToApiObject());
+        }
+
         [HttpGet("player/{id}")]
         public IActionResult GetPlayer(string id)
         {
             var player = gameService.GetPlayer(new PlayerId(id));
             if (player is null) return NotFound();
             return Ok(player.ToApiObject());
-        }
-
-        [HttpPost("player")]
-        public async Task<IActionResult> Join(PlayerRequest request)
-        {
-            var player = await gameService.Join(request.Name);
-            return Ok(player.ToApiObject());
-        }
-
-        [HttpGet("room")]
-        public IActionResult GetRooms()
-        {
-            return Ok(gameService.Rooms.Select(room => room.ToApiObject()));
-        }
-
-        [HttpPost("room")]
-        public async Task<IActionResult> CreateRoom(RoomRequest request)
-        {
-            var room = await gameService.CreateRoom(new PlayerId(request.PlayerId));
-            if (room is null) return NotFound();
-            return Ok(room.ToApiObject());
         }
     }
 }

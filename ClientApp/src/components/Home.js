@@ -16,12 +16,12 @@ export class Home extends Component {
     this.handleNewClick = this.handleNewClick.bind(this);
   }
 
-  isInRoom(playerId, room) {
-    return room.players.some(player => player.id === playerId);
+  isInGame(playerId, game) {
+    return game.players.some(player => player.id === playerId);
   }
 
-  canCreate(playerId, rooms) {
-    return rooms != null && !rooms.some(room => this.isInRoom(playerId, room))
+  canCreate(playerId, games) {
+    return games != null && !games.some(game => this.isInGame(playerId, game))
   }
 
   handleNotYouClick() {
@@ -29,23 +29,23 @@ export class Home extends Component {
   }
 
   handleNewClick() {
-    this.props.onCreateRoom();
+    this.props.onCreateGame();
   }
 
   render() {
     const loading = (<Loading></Loading>);
-    const rooms = this.props.rooms ? this.props.rooms : [];
-    const roomsList = (
+    const games = this.props.games ? this.props.games : [];
+    const gamesList = (
       <Card className="mb-3">
         <ul className="list-group list-group-flush">
-          {rooms.length
-            ? rooms.map(x => (
+          {games.length
+            ? games.map(x => (
               <li key={x.id} className="list-group-item">
                 {x.players.map(y => (
-                  <Badge key={y.id} color={y.id === this.props.playerId ? "primary" : "secondary"}>{y.name}</Badge>
+                  <Badge key={y.id} color={y.id === this.props.playerId ? "success" : "secondary"}>{y.name}</Badge>
                 ))}
               </li>))
-            : <li className="list-group-item">No rooms</li>}
+            : <li className="list-group-item">No games</li>}
         </ul>
       </Card>
     );
@@ -63,9 +63,9 @@ export class Home extends Component {
         </div>
         <Card>
           <CardBody>
-            <CardTitle><h5>Rooms</h5></CardTitle>
-            {this.props.rooms ? roomsList : loading}
-            {this.canCreate(this.props.playerId, this.props.rooms) ? <Button color="primary" onClick={this.handleNewClick}>New</Button> : null}
+            <CardTitle><h5>Games</h5></CardTitle>
+            {this.props.games ? gamesList : loading}
+            {this.canCreate(this.props.playerId, this.props.games) ? <Button color="primary" onClick={this.handleNewClick}>New</Button> : null}
           </CardBody>
         </Card>
       </div>

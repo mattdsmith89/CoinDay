@@ -15,14 +15,14 @@ namespace CoinDay.Models
             };
         }
 
-        public static object ToApiObject(this Room room)
+        public static object ToApiObject(this Game game)
         {
-            if (room is null) return null;
+            if (game is null) return null;
 
             return new
             {
-                Id = room.Id.ToString(),
-                Players = room.Players.Select(ToApiObject),
+                Id = game.Id.ToString(),
+                Players = game.Players.Select(ToApiObject),
             };
         }
     }

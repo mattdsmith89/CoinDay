@@ -11,22 +11,22 @@ namespace CoinDay.Services
     public class GameService
     {
         private readonly ISet<Player> players;
-        private readonly ISet<Room> rooms;
+        private readonly ISet<Game> games;
         private readonly IHubContext<GameHub> gameHub;
 
         public GameService(IHubContext<GameHub> gameHub)
         {
             players = new HashSet<Player>();
-            rooms = new HashSet<Room>();
+            games = new HashSet<Game>();
             this.gameHub = gameHub 
                 ?? throw new ArgumentNullException(nameof(gameHub));
         }
 
         public IEnumerable<Player> Players => players;
 
-        public IEnumerable<Room> Rooms => rooms;
+        public IEnumerable<Game> Games => games;
 
-        public async Task<Player> Join(string name)
+        public async Task<Player> NewPlayer(string name)
         {
             var player = new Player(name);
             players.Add(player);
@@ -48,18 +48,18 @@ namespace CoinDay.Services
             return players.FirstOrDefault(x => x.Id == id);
         }
 
-        public async Task<Room> CreateRoom(PlayerId initialPlayer)
+        public async Task<Game> NewGame(PlayerId initialPlayer)
         {
             var player = Players.FirstOrDefault(x => x.Id == initialPlayer);
             if (player is null) return null;
-            var room = new Room(player);
-            rooms.Add(room);
+            var game = new Game(player);
+            games.Add(game);
             await gameHub.Clients.All.SendAsync("Message", new Message
             {
-                Name = "NewRoom",
-                Body = room.Id,
+                Name = "NewGame",
+                Body = game.Id.ToString(),
             });
-            return room;
+            return game;
         }
     }
 }
