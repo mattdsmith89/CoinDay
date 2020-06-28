@@ -32,5 +32,15 @@ namespace CoinDay.Models
             && game.Id == this.Id;
 
         public override int GetHashCode() => HashCode.Combine(Id);
+
+        public void AddPlayer(Player player)
+        {
+            if (players.Count > 5) 
+                throw new InvalidOperationException("Too many players");
+            if (players.Contains(player)) 
+                throw new InvalidOperationException("Player already in game");
+
+            players.Add(player);
+        }
     }
 }

@@ -32,6 +32,17 @@ namespace CoinDay.Controllers
             return Ok(game.ToApiObject());
         }
 
+        [HttpPost("{id}")]
+        public async Task<IActionResult> JoinGame(string id, [FromBody] PlayerRequest request)
+        {
+            var game = await gameService.JoinGame(
+                new GameId(id),
+                new PlayerId(request.Id)
+            );
+            if (game is null) return NotFound();
+            return Ok(game.ToApiObject());
+        }
+
         [HttpPost("player")]
         public async Task<IActionResult> NewPlayer(PlayerRequest request)
         {

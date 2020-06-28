@@ -61,5 +61,23 @@ namespace CoinDay.Services
             });
             return game;
         }
+
+        public async Task<Game> JoinGame(GameId gameId, PlayerId playerId)
+        {
+            var game = games.FirstOrDefault(x => x.Id == gameId);
+            if (game is null || game.Players.Count() > 5) return null;
+
+            var player = GetPlayer(playerId);
+            var isInGame = games.Any(x => x.Players.Contains(player));
+            if (isInGame) return null;
+
+            game.AddPlayer(player);
+            await gameHub.Clients.All.SendAsync("Message", new Message
+            {
+                Name = "GameUpdated",
+                Body = game.Id.ToString(),
+            });
+            return game;
+        }
     }
 }

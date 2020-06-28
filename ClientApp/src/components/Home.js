@@ -19,7 +19,6 @@ export class Home extends Component {
   }
 
   render() {
-
     return (
       <div>
         <h1>Home</h1>
@@ -35,6 +34,7 @@ export class Home extends Component {
           games={this.props.games}
           playerId={this.props.playerId}
           onCreateGame={this.handleCreateGame}
+          onJoin={() => {}}
         ></Games>
       </div>
     );

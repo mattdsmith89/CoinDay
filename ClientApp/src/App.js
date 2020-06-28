@@ -17,6 +17,7 @@ export default class App extends Component {
     this.handleDisconnected = this.handleDisconnected.bind(this);
     this.handleCreateGame = this.handleCreateGame.bind(this);
     this.handleNewGameCreated = this.handleNewGameCreated.bind(this);
+    this.handleGameUpdated = this.handleGameUpdated.bind(this);
     this.state = {
       playerId: null,
       games: null,
@@ -56,6 +57,10 @@ export default class App extends Component {
   async handleNewGameCreated() {
     const games = await this.getGames();
     this.setState({ games });
+  }
+
+  handleGameUpdated() {
+    this.handleNewGameCreated();
   }
 
   handleConnected() {
@@ -103,7 +108,9 @@ export default class App extends Component {
         <SignalR 
           onConnect={this.handleConnected} 
           onDisconnect={this.handleDisconnected}
-          onNewGame={this.handleNewGameCreated} />
+          onNewGame={this.handleNewGameCreated}
+          onGameUpdated={this.handleGameUpdated}
+          />
         <Route
           exact
           path='/'

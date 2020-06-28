@@ -13,6 +13,7 @@ export class Games extends Component {
     super(props);
 
     this.handleNewClick = this.handleNewClick.bind(this);
+    this.handleJoinClick = this.handleJoinClick.bind(this);
   }
 
   isInGame(playerId, game) {
@@ -27,6 +28,27 @@ export class Games extends Component {
     this.props.onCreateGame();
   }
 
+  handleJoinClick(gameId) {
+    this.joinGame(gameId);
+  }
+
+  get canJoin() {
+    const games = this.props.games ? this.props.games : [];
+    return !games.some(game => this.isInGame(this.props.playerId, game));
+  }
+
+  async joinGame(gameId) {
+    const playerId = this.props.playerId;
+    const response = await fetch(`game/${gameId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: playerId }),
+    });
+    this.props.onJoin(await response.json());
+  }
+
   render() {
     const loading = (<Loading></Loading>);
     const games = this.props.games ? this.props.games : [];
@@ -35,17 +57,22 @@ export class Games extends Component {
         <ul className="list-group list-group-flush">
           {games.length
             ? games.map(x => (
-              <li key={x.id} className="list-group-item">
-                <div>
+              <li key={x.id} className="list-group-item d-flex" style={{ height: "3.5em" }}>
+                <div className="flex-fill d-flex align-items-center">
                   {x.players.map(y => (
-                    <Badge key={y.id} color={y.id === this.props.playerId ? "success" : "secondary"}>
+                    <Badge
+                      key={y.id}
+                      className="mr-2"
+                      color={y.id === this.props.playerId ? "success" : "secondary"}>
                       {y.name}
                     </Badge>
                   ))}
                 </div>
-                <div className="float-right"></div>
+                <div className="float-right">
+                  {this.canJoin ? <Button onClick={() => this.handleJoinClick(x.id)} size="sm">Join</Button> : null}
+                </div>
               </li>))
-            : <li className="list-group-item">No games</li>}
+            : <li className="list-group-item pt-3" style={{ height: "3.5em" }}>No games</li>}
         </ul>
       </Card>
     );

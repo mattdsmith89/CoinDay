@@ -44,6 +44,9 @@ export class SignalR extends PureComponent {
       case "NewGame":
         this.props.onNewGame();
         break;
+      case "GameUpdated":
+        this.props.onGameUpdated(message.body);
+        break;
       default:
         console.log("Unknown message", message);
     }
