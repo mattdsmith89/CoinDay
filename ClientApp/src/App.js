@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router';
+import { Route, Redirect, withRouter } from 'react-router';
 import { Layout } from './components/Layout';
 import { Home } from './components/Home';
 import { SignalR } from './components/SignalR';
 import { Join } from './components/Join';
+import { Game } from './components/Game';
 
 import './custom.css'
 import { Loading } from './components/Loading';
 
-export default class App extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.handleJoin = this.handleJoin.bind(this);
@@ -18,6 +19,7 @@ export default class App extends Component {
     this.handleCreateGame = this.handleCreateGame.bind(this);
     this.handleNewGameCreated = this.handleNewGameCreated.bind(this);
     this.handleGameUpdated = this.handleGameUpdated.bind(this);
+    this.handleJoinGame = this.handleJoinGame.bind(this);
     this.state = {
       playerId: null,
       games: null,
@@ -25,6 +27,14 @@ export default class App extends Component {
       loading: true,
       connected: false,
     };
+  }
+
+  get currentGame() {
+    if (!this.state.games)
+      return null;
+
+    return this.state.games.find(x =>
+      x.players.some(y => y.id === this.state.playerId));
   }
 
   async componentDidMount() {
@@ -50,17 +60,31 @@ export default class App extends Component {
     this.setState({ playerId: null, name: null });
   }
 
-  handleCreateGame() {
-    this.createGame(this.state.playerId);
+  async handleCreateGame() {
+    const { history } = this.props;
+    const { playerId } = this.state;
+    await this.createGame(playerId);
+
+    history.push("/play");
   }
 
-  async handleNewGameCreated() {
-    const games = await this.getGames();
-    this.setState({ games });
+  async handleJoinGame() {
+    const { history } = this.props;
+    await this.updateGames();
+    history.push("/play");
+  }
+
+  handleNewGameCreated() {
+    this.updateGames();
   }
 
   handleGameUpdated() {
-    this.handleNewGameCreated();
+    this.updateGames();
+  }
+
+  async updateGames() {
+    const games = await this.getGames();
+    this.setState({ games });
   }
 
   handleConnected() {
@@ -105,12 +129,12 @@ export default class App extends Component {
   render() {
     return (
       <Layout connected={this.state.connected}>
-        <SignalR 
-          onConnect={this.handleConnected} 
+        <SignalR
+          onConnect={this.handleConnected}
           onDisconnect={this.handleDisconnected}
           onNewGame={this.handleNewGameCreated}
           onGameUpdated={this.handleGameUpdated}
-          />
+        />
         <Route
           exact
           path='/'
@@ -118,16 +142,30 @@ export default class App extends Component {
             return this.state.loading
               ? <Loading />
               : this.state.playerId
-                ? <Home 
-                    name={this.state.name} 
-                    playerId={this.state.playerId}
-                    games={this.state.games}
-                    onClearPlayer={this.handleClear}
-                    onCreateGame={this.handleCreateGame} />
+                ? <Home
+                  name={this.state.name}
+                  playerId={this.state.playerId}
+                  games={this.state.games}
+                  onClearPlayer={this.handleClear}
+                  onCreateGame={this.handleCreateGame}
+                  onJoinGame={this.handleJoinGame}
+                />
                 : <Join onJoin={this.handleJoin} />
+          }}
+        />
+        <Route
+          path="/play"
+          render={() => {
+            return this.state.loading
+              ? <Loading />
+              : this.currentGame
+                ? <Game game={this.currentGame} />
+                : <Redirect to="/" />
           }}
         />
       </Layout>
     );
   }
 }
+
+export default withRouter(App);

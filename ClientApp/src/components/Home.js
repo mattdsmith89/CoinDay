@@ -8,6 +8,7 @@ export class Home extends Component {
 
     this.handleNotYouClick = this.handleNotYouClick.bind(this);
     this.handleCreateGame = this.handleCreateGame.bind(this);
+    this.handleJoin = this.handleJoin.bind(this);
   }
 
   handleNotYouClick() {
@@ -16,6 +17,10 @@ export class Home extends Component {
 
   handleCreateGame() {
     this.props.onCreateGame();
+  }
+
+  handleJoin(game) {
+    this.props.onJoinGame(game);
   }
 
   render() {
@@ -34,7 +39,7 @@ export class Home extends Component {
           games={this.props.games}
           playerId={this.props.playerId}
           onCreateGame={this.handleCreateGame}
-          onJoin={() => {}}
+          onJoin={this.handleJoin}
         ></Games>
       </div>
     );

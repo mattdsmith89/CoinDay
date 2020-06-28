@@ -69,7 +69,7 @@ namespace CoinDay.Services
 
             var player = GetPlayer(playerId);
             var isInGame = games.Any(x => x.Players.Contains(player));
-            if (isInGame) return null;
+            if (player is null || isInGame) return null;
 
             game.AddPlayer(player);
             await gameHub.Clients.All.SendAsync("Message", new Message

@@ -35,6 +35,11 @@ namespace CoinDay.Models
 
         public void AddPlayer(Player player)
         {
+            if (player is null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
             if (players.Count > 5) 
                 throw new InvalidOperationException("Too many players");
             if (players.Contains(player)) 
