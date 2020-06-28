@@ -39,9 +39,8 @@ class Games extends Component {
     return !games.some(game => this.isInGame(this.props.playerId, game));
   }
 
-  get canPlay() {
-    const games = this.props.games ? this.props.games : [];
-    return games.some(game => this.isInGame(this.props.playerId, game));
+  canPlay(game) {
+    return this.isInGame(this.props.playerId, game);
   }
 
   async joinGame(gameId) {
@@ -82,7 +81,7 @@ class Games extends Component {
                 </div>
                 <div className="float-right">
                   {this.canJoin ? <Button onClick={() => this.handleJoinClick(x.id)} size="sm">Join</Button> : null}
-                  {this.canPlay ? <Button onClick={this.goToPlay} size="sm">Play</Button> : null}
+                  {this.canPlay(x) ? <Button onClick={this.goToPlay} size="sm">Play</Button> : null}
                 </div>
               </li>))
             : <li className="list-group-item pt-3" style={{ height: "3.5em" }}>No games</li>}
