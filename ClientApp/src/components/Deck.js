@@ -21,7 +21,9 @@ export default class Deck extends Component {
       result += `${whiteShadow}px ${whiteShadow}px 1px white, `
         + `${grayShadow}px ${grayShadow}px 1px gray, `
     }
-    return result.slice(0, -2);
+    const finalShadowOffset = Deck.cardThickness * cardsLeft + 1;
+    result += `inset 0 0 5rem rgba(0,0,0,0.3), ${finalShadowOffset}px ${finalShadowOffset}px 3px rgba(0,0,0,0.6)`;
+    return result;
   }
 
   render() {
