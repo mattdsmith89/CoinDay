@@ -159,7 +159,7 @@ class App extends Component {
             return this.state.loading
               ? <Loading />
               : this.currentGame
-                ? <Game game={this.currentGame} />
+                ? <Game game={this.currentGame} playerId={this.state.playerId} />
                 : <Redirect to="/" />
           }}
         />

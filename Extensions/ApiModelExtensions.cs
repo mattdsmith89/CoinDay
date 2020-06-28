@@ -6,7 +6,8 @@ namespace CoinDay.Models
     {
         public static object ToApiObject(this Player player)
         {
-            if (player is null) return null;
+            if (player is null) 
+                return null;
 
             return new
             {
@@ -17,12 +18,28 @@ namespace CoinDay.Models
 
         public static object ToApiObject(this Game game)
         {
-            if (game is null) return null;
+            if (game is null) 
+                return null;
 
             return new
             {
                 Id = game.Id.ToString(),
                 Players = game.Players.Select(ToApiObject),
+                game.CardsLeft,
+                CurrentCard = game.CurrentCard.ToApiObject(),
+                game.Started,
+                CurrentPlayer = game.CurrentPlayer.ToApiObject(),
+            };
+        }
+
+        public static object ToApiObject(this Card card)
+        {
+            if (card is null)
+                return null;
+
+            return new
+            {
+                card.Value,
             };
         }
     }

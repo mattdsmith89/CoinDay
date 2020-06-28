@@ -28,7 +28,9 @@ namespace CoinDay.Controllers
         public async Task<IActionResult> NewGame(GameRequest request)
         {
             var game = await gameService.NewGame(new PlayerId(request.PlayerId));
-            if (game is null) return NotFound();
+            if (game is null) 
+                return NotFound();
+
             return Ok(game.ToApiObject());
         }
 
@@ -39,7 +41,24 @@ namespace CoinDay.Controllers
                 new GameId(id),
                 new PlayerId(request.Id)
             );
-            if (game is null) return NotFound();
+            if (game is null) 
+                return NotFound();
+
+            return Ok(game.ToApiObject());
+        }
+
+        [HttpPost("{id}/action")]
+        public async Task<IActionResult> PerformAction(string id, [FromBody] ActionRequest request)
+        {
+            var game = await gameService.PerformAction(
+                request.Action,
+                new GameId(id),
+                new PlayerId(request.PlayerId)
+            );
+
+            if (game is null)
+                return NotFound();
+            
             return Ok(game.ToApiObject());
         }
 
@@ -54,7 +73,9 @@ namespace CoinDay.Controllers
         public IActionResult GetPlayer(string id)
         {
             var player = gameService.GetPlayer(new PlayerId(id));
-            if (player is null) return NotFound();
+            if (player is null) 
+                return NotFound();
+            
             return Ok(player.ToApiObject());
         }
     }

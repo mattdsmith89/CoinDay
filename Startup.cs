@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using CoinDay.Hubs;
 using CoinDay.Services;
 using Microsoft.AspNetCore.Builder;
@@ -22,7 +23,11 @@ namespace CoinDay
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+            .AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
             services.AddSignalR();
             services.AddSingleton<GameService>();
 

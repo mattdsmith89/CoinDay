@@ -18,7 +18,7 @@ namespace CoinDay.Services
         {
             players = new HashSet<Player>();
             games = new HashSet<Game>();
-            this.gameHub = gameHub 
+            this.gameHub = gameHub
                 ?? throw new ArgumentNullException(nameof(gameHub));
         }
 
@@ -77,6 +77,33 @@ namespace CoinDay.Services
                 Name = "GameUpdated",
                 Body = game.Id.ToString(),
             });
+            return game;
+        }
+
+        public async Task<Game> PerformAction(ActionType action, GameId gameId, PlayerId playerId)
+        {
+            if (gameId is null)
+                throw new ArgumentNullException(nameof(gameId));
+            if (playerId is null)
+                throw new ArgumentNullException(nameof(playerId));
+
+            var game = games.FirstOrDefault(x => x.Id == gameId);
+            if (game is null || !game.Players.Any(x => x.Id == playerId))
+                return null;
+
+            switch (action)
+            {
+                case ActionType.StartGame:
+                    game.StartGame();
+                    break;
+            }
+
+            await gameHub.Clients.All.SendAsync("Message", new Message
+            {
+                Name = "GameUpdated",
+                Body = game.Id.ToString(),
+            });
+
             return game;
         }
     }

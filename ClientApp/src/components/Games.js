@@ -68,7 +68,7 @@ class Games extends Component {
         <ul className="list-group list-group-flush">
           {games.length
             ? games.map(x => (
-              <li key={x.id} className="list-group-item d-flex" style={{ "min-height": "3.5em" }}>
+              <li key={x.id} className="list-group-item d-flex" style={{ minHeight: "3.5em" }}>
                 <div className="flex-fill d-flex align-items-center flex-wrap">
                   {x.players.map(y => (
                     <Badge
