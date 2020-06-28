@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import {
   Button,
   Card,
@@ -6,14 +7,15 @@ import {
   CardBody,
   Badge,
 } from 'reactstrap';
-import { Loading } from './Loading';
+import Loading from './Loading';
 
-export class Games extends Component {
+class Games extends Component {
   constructor(props) {
     super(props);
 
     this.handleNewClick = this.handleNewClick.bind(this);
     this.handleJoinClick = this.handleJoinClick.bind(this);
+    this.goToPlay = this.goToPlay.bind(this);
   }
 
   isInGame(playerId, game) {
@@ -37,6 +39,11 @@ export class Games extends Component {
     return !games.some(game => this.isInGame(this.props.playerId, game));
   }
 
+  get canPlay() {
+    const games = this.props.games ? this.props.games : [];
+    return games.some(game => this.isInGame(this.props.playerId, game));
+  }
+
   async joinGame(gameId) {
     const playerId = this.props.playerId;
     const response = await fetch(`game/${gameId}`, {
@@ -49,6 +56,11 @@ export class Games extends Component {
     this.props.onJoin(await response.json());
   }
 
+  goToPlay() {
+    const { history } = this.props;
+    history.push("/play");
+  }
+
   render() {
     const loading = (<Loading></Loading>);
     const games = this.props.games ? this.props.games : [];
@@ -57,12 +69,12 @@ export class Games extends Component {
         <ul className="list-group list-group-flush">
           {games.length
             ? games.map(x => (
-              <li key={x.id} className="list-group-item d-flex" style={{ height: "3.5em" }}>
-                <div className="flex-fill d-flex align-items-center">
+              <li key={x.id} className="list-group-item d-flex" style={{ "min-height": "3.5em" }}>
+                <div className="flex-fill d-flex align-items-center flex-wrap">
                   {x.players.map(y => (
                     <Badge
                       key={y.id}
-                      className="mr-2"
+                      className="mr-2 my-1"
                       color={y.id === this.props.playerId ? "success" : "secondary"}>
                       {y.name}
                     </Badge>
@@ -70,6 +82,7 @@ export class Games extends Component {
                 </div>
                 <div className="float-right">
                   {this.canJoin ? <Button onClick={() => this.handleJoinClick(x.id)} size="sm">Join</Button> : null}
+                  {this.canPlay ? <Button onClick={this.goToPlay} size="sm">Play</Button> : null}
                 </div>
               </li>))
             : <li className="list-group-item pt-3" style={{ height: "3.5em" }}>No games</li>}
@@ -90,3 +103,5 @@ export class Games extends Component {
     )
   }
 }
+
+export default withRouter(Games);

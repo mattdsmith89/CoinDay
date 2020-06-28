@@ -10,7 +10,7 @@ import {
   Button,
 } from "reactstrap";
 
-export class Join extends Component {
+export default class Join extends Component {
   constructor(props) {
     super(props);
     this.state = { value: "" };

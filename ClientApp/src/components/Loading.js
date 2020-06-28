@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-export class Loading extends Component {
+export default class Loading extends Component {
   render() {
     return (
       <div className="d-flex h-100 align-items-center justify-content-center">

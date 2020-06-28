@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import * as signalR from "@microsoft/signalr";
 
-export class SignalR extends PureComponent {
+export default class SignalR extends PureComponent {
   constructor(props) {
     super(props);
     this.connection = null;

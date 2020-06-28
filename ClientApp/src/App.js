@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Route, Redirect, withRouter } from 'react-router';
-import { Layout } from './components/Layout';
-import { Home } from './components/Home';
-import { SignalR } from './components/SignalR';
-import { Join } from './components/Join';
-import { Game } from './components/Game';
+import Layout from './components/Layout';
+import Home from './components/Home';
+import SignalR from './components/SignalR';
+import Join from './components/Join';
+import Game from './components/Game';
+import Loading from './components/Loading';
 
 import './custom.css'
-import { Loading } from './components/Loading';
 
 class App extends Component {
   constructor(props) {

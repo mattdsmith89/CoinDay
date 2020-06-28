@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
-import { Games } from './Games';
+import Games from './Games';
 
-export class Home extends Component {
+export default class Home extends Component {
   constructor(props) {
     super(props);
 
