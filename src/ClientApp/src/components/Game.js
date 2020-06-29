@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Badge } from "reactstrap";
+import { Button, Badge, ButtonGroup } from "reactstrap";
 import Deck from "./Deck";
 import ActiveCard from "./ActiveCard";
 import PlayArea from "./PlayArea";
@@ -26,6 +26,20 @@ export default class Game extends Component {
     });
   }
 
+  get currentActions() {
+    const { game, playerId } = this.props;
+    const { currentPlayer } = game;
+    if (currentPlayer.id !== playerId)
+      return <p>Waiting for {game.currentPlayer.name}</p>;
+
+    return (
+      <ButtonGroup>
+        <Button size="lg">Place Coin</Button>
+        <Button size="lg">Take Card</Button>
+      </ButtonGroup>
+    )
+  }
+
   render() {
     const { game, playerId } = this.props;
     const { players } = game;
@@ -36,7 +50,7 @@ export default class Game extends Component {
       </div>);
     const actions = (
       <div className="pt-3 d-flex justify-content-center">
-        {game.currentPlayer ? <p>Waiting for {game.currentPlayer.name}</p> : null}
+        {this.currentActions}
       </div>);
     const playerList = (
       <div>
@@ -55,11 +69,13 @@ export default class Game extends Component {
             <PlayArea className="mb-2" playArea={playArea} key={playArea.player.id}></PlayArea>
           )) : playerList}
         </div>
-        {!game.started
-          ? <Button onClick={this.handleStart} disabled={game.players.length < 3}>Start</Button>
-          : null}
-        {game.started ? table : null}
-        {game.started ? actions : null}
+        <div>
+          {!game.started
+            ? <Button onClick={this.handleStart} disabled={game.players.length < 3}>Start</Button>
+            : null}
+        </div>
+        <div>{game.started ? table : null}</div>
+        <div className="my-3">{game.started ? actions : null}</div>
       </div>
     )
   }
