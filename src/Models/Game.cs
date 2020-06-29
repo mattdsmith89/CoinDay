@@ -27,6 +27,9 @@ namespace CoinDay.Models
         public IEnumerable<Player> Players
             => players;
 
+        public IEnumerable<PlayArea> PlayAreas
+            => playAreas;
+
         public Card CurrentCard
             => CardsLeft > 0 ? deck.Peek() : null;
 
