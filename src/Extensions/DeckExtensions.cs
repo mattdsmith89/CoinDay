@@ -1,4 +1,5 @@
 using System.Linq;
+using CoinDay.Models;
 
 namespace System.Collections.Generic
 {
@@ -27,6 +28,17 @@ namespace System.Collections.Generic
                 throw new ArgumentNullException(nameof(random));
 
             return source.ShuffleIterator(random);
+        }
+
+        public static int GetScore(this IEnumerable<Card> source)
+        {
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source
+                .OrderByDescending(x => x.Value)
+                .Where((x, i) => i == 0 || source.ElementAt(i - 1).Value + 1 < x.Value)
+                .Sum(x => x.Value);
         }
 
         private static IEnumerable<T> ShuffleIterator<T>(this IEnumerable<T> source, Random random)
