@@ -36,7 +36,7 @@ namespace System.Collections.Generic
                 throw new ArgumentNullException(nameof(source));
 
             return source
-                .OrderByDescending(x => x.Value)
+                .OrderBy(x => x.Value)
                 .Where((x, i) => i == 0 || source.ElementAt(i - 1).Value + 1 < x.Value)
                 .Sum(x => x.Value);
         }
