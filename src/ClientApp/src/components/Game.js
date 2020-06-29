@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, Badge } from "reactstrap";
 import Deck from "./Deck";
 import ActiveCard from "./ActiveCard";
+import PlayArea from "./PlayArea";
 
 export default class Game extends Component {
   constructor(props) {
@@ -27,6 +28,7 @@ export default class Game extends Component {
 
   render() {
     const { game, playerId } = this.props;
+    const { players } = game;
     const table = (
       <div className="pt-3 d-flex justify-content-center">
         <ActiveCard value={game.currentCard ? game.currentCard.value : null}></ActiveCard>
@@ -36,19 +38,22 @@ export default class Game extends Component {
       <div className="pt-3 d-flex justify-content-center">
         {game.currentPlayer ? <p>Waiting for {game.currentPlayer.name}</p> : null}
       </div>);
+    const playerList = (
+      <div>
+        <span>Players: </span>
+        {players.map(player => (
+          <Badge key={player.id} className="mr-2" color={player.id === playerId ? "success" : "secondary"}>
+            {player.name}
+          </Badge>
+        ))}
+      </div>);
 
     return (
       <div>
-        <h5>Players</h5>
-        <p></p>
         <div className="pb-3">
-          {game.players.map(x => (
-            <Badge
-              key={x.id}
-              color={x.id === playerId ? "success" : "secondary"}
-              className="mr-1"
-            >{x.name}</Badge>
-          ))}
+          {game.playAreas && game.playAreas.length ? game.playAreas.map(playArea => (
+            <PlayArea className="mb-2" playArea={playArea} key={playArea.player.id}></PlayArea>
+          )) : playerList}
         </div>
         {!game.started
           ? <Button onClick={this.handleStart} disabled={game.players.length < 3}>Start</Button>
