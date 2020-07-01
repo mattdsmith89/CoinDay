@@ -9,33 +9,46 @@ export default class Game extends Component {
     super(props);
 
     this.handleStart = this.handleStart.bind(this);
+    this.handleAdd = this.handleAdd.bind(this);
+    this.handleTake = this.handleTake.bind(this);
   }
 
   handleStart() {
-    this.startGame();
+    this.postAction("StartGame");
   }
 
-  async startGame() {
+  handleAdd() {
+    this.postAction("AddCoin");
+  }
+
+  handleTake() {
+    this.postAction("TakeCard");
+  }
+
+  async postAction(action) {
     const { game, playerId } = this.props;
     await fetch(`game/${game.id}/action`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ action: "StartGame", playerId }),
+      body: JSON.stringify({ action, playerId }),
     });
   }
 
   get currentActions() {
     const { game, playerId } = this.props;
     const { currentPlayer } = game;
+    if (!currentPlayer)
+      return null;
+
     if (currentPlayer.id !== playerId)
       return <p>Waiting for {game.currentPlayer.name}</p>;
 
     return (
       <ButtonGroup>
-        <Button size="lg">Place Coin</Button>
-        <Button size="lg">Take Card</Button>
+        <Button size="lg" onClick={this.handleAdd}>Place Coin</Button>
+        <Button size="lg" onClick={this.handleTake}>Take Card</Button>
       </ButtonGroup>
     )
   }
@@ -45,7 +58,7 @@ export default class Game extends Component {
     const { players } = game;
     const table = (
       <div className="pt-3 d-flex justify-content-center">
-        <ActiveCard value={game.currentCard ? game.currentCard.value : null}></ActiveCard>
+        <ActiveCard card={game.currentCard}></ActiveCard>
         <Deck cardsLeft={game.cardsLeft}></Deck>
       </div>);
     const actions = (

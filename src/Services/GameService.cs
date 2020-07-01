@@ -96,6 +96,14 @@ namespace CoinDay.Services
                 case ActionType.StartGame:
                     game.StartGame();
                     break;
+                case ActionType.AddCoin:
+                    game.AddCoin(playerId);
+                    break;
+                case ActionType.TakeCard:
+                    game.TakeCard(playerId);
+                    break;
+                default:
+                    return game;
             }
 
             await gameHub.Clients.All.SendAsync("Message", new Message

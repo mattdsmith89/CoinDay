@@ -1,12 +1,15 @@
 import React, { Component } from "react";
 import { Card } from "reactstrap";
 import Deck from "./Deck";
-import "./ActiveCard.css"
+import "./CardScale.css"
 
 export default class ActiveCard extends Component {
 
   render() {
-    const { value } = this.props;
+    if (!this.props.card)
+      return null;
+
+    const { value, coins } = this.props.card;
     let classNames = "d-flex align-items-center justify-content-center";
     classNames += ` card-${value}`;
     return (
@@ -26,6 +29,7 @@ export default class ActiveCard extends Component {
             boxShadow: "inset 0 0 5rem rgba(0,0,0,0.3), 1px 1px 3px black"
           }}>
           <h1 style={{ fontSize: "5rem" }}>{value}</h1>
+          <p>{coins} Coin{coins === 1 ? "" : "s"}</p>
         </Card>
       </div>
     );

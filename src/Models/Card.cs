@@ -5,6 +5,8 @@ namespace CoinDay.Models
 {
     public sealed class Card
     {
+        private int coins = 0;
+
         public Card(int value)
         {
             if (value < 3 || value > 35)
@@ -14,6 +16,8 @@ namespace CoinDay.Models
         }
 
         public int Value { get; }
+
+        public int Coins => coins;
 
 
         public override bool Equals(object obj) =>
@@ -31,6 +35,11 @@ namespace CoinDay.Models
             {
                 yield return new Card(i);
             }
+        }
+    
+        public void AddCoin()
+        {
+            coins++;
         }
     }
 }

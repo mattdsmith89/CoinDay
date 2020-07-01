@@ -37,7 +37,7 @@ namespace System.Collections.Generic
 
             return source
                 .OrderBy(x => x.Value)
-                .Where((x, i) => i == 0 || source.ElementAt(i - 1).Value + 1 < x.Value)
+                .Where((x, i) => i == 0 || source.OrderBy(x => x.Value).ElementAt(i - 1).Value + 1 < x.Value)
                 .Sum(x => x.Value);
         }
 

@@ -8,9 +8,10 @@ namespace CoinDay.Models
     {
         private readonly ISet<Player> players;
         private readonly ISet<PlayArea> playAreas;
+        private readonly ISet<PlayerId> playOrder;
         private readonly Queue<Card> deck;
         private bool started;
-        private int currentPlayerIndex = 0;
+        private int turn = 0;
 
         public Game(Player initial)
         {
@@ -22,6 +23,7 @@ namespace CoinDay.Models
             deck = new Queue<Card>();
             players = new HashSet<Player> { initial };
             playAreas = new HashSet<PlayArea>();
+            playOrder = new HashSet<PlayerId>();
         }
 
         public IEnumerable<Player> Players
@@ -34,7 +36,9 @@ namespace CoinDay.Models
             => CardsLeft > 0 ? deck.Peek() : null;
 
         public Player CurrentPlayer
-            => started ? players.ElementAtOrDefault(currentPlayerIndex) : null;
+            => started 
+                ? players.FirstOrDefault(x => x.Id == playOrder.ElementAt(turn % playOrder.Count)) 
+                : null;
 
         public int? CardsLeft
             => started ? deck.Count - 1 : (int?)null;
@@ -75,13 +79,53 @@ namespace CoinDay.Models
                 return;
 
             deck.Enqueue(Card.NewDeck().Shuffle().Take(24));
-            currentPlayerIndex = new Random().Next(players.Count);
             playAreas.Clear();
+            playOrder.Clear();
             foreach (var player in players)
             {
                 playAreas.Add(new PlayArea(player, players.Count));
+                playOrder.Add(player.Id);
             }
+            playOrder.Shuffle();
+            turn = 0;
             started = true;
+        }
+
+        public void TakeCard(PlayerId playerId)
+        {
+            if (!started)
+                return;
+
+            var playArea = playAreas.FirstOrDefault(x => x.Player.Id == playerId);
+            if (playArea is null)
+                return;
+
+            if (CurrentPlayer != playArea.Player)
+                return;
+
+            var card = deck.Dequeue();
+            playArea.TakeCard(card);
+        }
+
+        public void AddCoin(PlayerId playerId)
+        {
+            if (!started)
+                return;
+
+            var playArea = playAreas.FirstOrDefault(x => x.Player.Id == playerId);
+            if (playArea is null)
+                return;
+
+            if (CurrentPlayer != playArea.Player)
+                return;
+
+            playArea.SpendCoin(CurrentCard);
+            NextTurn();
+        }
+
+        private void NextTurn()
+        {
+            turn++;
         }
     }
 }

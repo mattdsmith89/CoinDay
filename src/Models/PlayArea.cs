@@ -43,5 +43,27 @@ namespace CoinDay.Models
             && playArea.Player == this.Player;
 
         public override int GetHashCode() => HashCode.Combine(Player);
+
+        public void TakeCard(Card card)
+        {
+            if (card is null)
+            {
+                throw new ArgumentNullException(nameof(card));
+            }
+
+            cards.Add(card);
+            coins += card.Coins;
+        }
+
+        public void SpendCoin(Card card)
+        {
+            if (card is null)
+            {
+                throw new ArgumentNullException(nameof(card));
+            }
+
+            card.AddCoin();
+            coins--;
+        }
     }
 }

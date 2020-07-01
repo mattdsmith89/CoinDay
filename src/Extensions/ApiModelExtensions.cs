@@ -41,6 +41,7 @@ namespace CoinDay.Models
             return new
             {
                 card.Value,
+                card.Coins,
             };
         }
 

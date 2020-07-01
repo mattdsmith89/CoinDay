@@ -2,6 +2,8 @@ namespace CoinDay.Models
 {
     public enum ActionType
     {
-        StartGame
+        StartGame,
+        TakeCard,
+        AddCoin,
     }
 }
