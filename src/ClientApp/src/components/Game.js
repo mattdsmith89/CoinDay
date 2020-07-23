@@ -80,10 +80,10 @@ export default class Game extends Component {
         ))}
       </div>);
 
-    const winningPlayer = playAreas.reduce((min, playArea) => min.score < playArea.score ? min : playArea);
+    const winningPlayer = playAreas.reduce((min, playArea) => min && min.score < playArea.score ? min : playArea, null);
     const finish = (
       <div>
-        <h3 className="mb-4">Game over, {winningPlayer.player.name} wins!</h3>
+        <h3 className="mb-4">Game over, {winningPlayer ? winningPlayer.player.name : null} wins!</h3>
         <table className="table mb-5">
           <thead className="thead-dark">
             <tr>
