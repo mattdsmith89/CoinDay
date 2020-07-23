@@ -62,6 +62,11 @@ namespace CoinDay.Models
                 throw new ArgumentNullException(nameof(card));
             }
 
+            if (coins == 0)
+            {
+                throw new InvalidOperationException("Can't spend coins you don't have!");
+            }
+
             card.AddCoin();
             coins--;
         }

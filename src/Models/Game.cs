@@ -10,7 +10,7 @@ namespace CoinDay.Models
         private readonly ISet<PlayArea> playAreas;
         private readonly ISet<PlayerId> playOrder;
         private readonly Queue<Card> deck;
-        private bool started;
+        private GameState state;
         private int turn = 0;
 
         public Game(Player initial)
@@ -19,7 +19,7 @@ namespace CoinDay.Models
                 throw new ArgumentNullException(nameof(initial));
 
             Id = GameId.NewId();
-            started = false;
+            state = GameState.New;
             deck = new Queue<Card>();
             players = new HashSet<Player> { initial };
             playAreas = new HashSet<PlayArea>();
@@ -33,18 +33,18 @@ namespace CoinDay.Models
             => playAreas;
 
         public Card CurrentCard
-            => CardsLeft > 0 ? deck.Peek() : null;
+            => deck.Count > 0 ? deck.Peek() : null;
 
         public Player CurrentPlayer
-            => started 
-                ? players.FirstOrDefault(x => x.Id == playOrder.ElementAt(turn % playOrder.Count)) 
+            => state == GameState.InProgress
+                ? players.FirstOrDefault(x => x.Id == playOrder.ElementAt(turn % playOrder.Count))
                 : null;
 
         public int? CardsLeft
-            => started ? deck.Count - 1 : (int?)null;
+            => state == GameState.InProgress ? deck.Count - 1 : (int?)null;
 
-        public bool Started
-            => started;
+        public GameState State
+            => state;
 
         public GameId Id { get; }
 
@@ -73,7 +73,7 @@ namespace CoinDay.Models
 
         public void StartGame()
         {
-            if (started)
+            if (state == GameState.InProgress)
                 return;
             if (players.Count < 3 || players.Count > 7)
                 return;
@@ -88,12 +88,12 @@ namespace CoinDay.Models
             }
             playOrder.Shuffle();
             turn = 0;
-            started = true;
+            state = GameState.InProgress;
         }
 
         public void TakeCard(PlayerId playerId)
         {
-            if (!started)
+            if (state != GameState.InProgress)
                 return;
 
             var playArea = playAreas.FirstOrDefault(x => x.Player.Id == playerId);
@@ -104,12 +104,18 @@ namespace CoinDay.Models
                 return;
 
             var card = deck.Dequeue();
+
             playArea.TakeCard(card);
+
+            if (state == GameState.InProgress && CurrentCard is null)
+            {
+                EndGame();
+            }
         }
 
         public void AddCoin(PlayerId playerId)
         {
-            if (!started)
+            if (state != GameState.InProgress)
                 return;
 
             var playArea = playAreas.FirstOrDefault(x => x.Player.Id == playerId);
@@ -126,6 +132,11 @@ namespace CoinDay.Models
         private void NextTurn()
         {
             turn++;
+        }
+
+        private void EndGame()
+        {
+            state = GameState.Finished;
         }
     }
 }

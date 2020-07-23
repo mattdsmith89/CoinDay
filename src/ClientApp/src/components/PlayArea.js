@@ -15,14 +15,35 @@ export default class PlayArea extends Component {
     return offset + this.getGroupingOffset(array, index - 1);
   }
 
+  getCoinDisplay(showValue, coins) {
+    if (showValue) {
+      return `${coins} Coin${coins === 1 ? "" : "s"}`;
+    }
+
+    if (coins < 5) {
+      return "Few coins";
+    }
+
+    if (coins < 14) {
+      return "Many coins";
+    }
+
+    if (coins < 20) {
+      return "Loadsa coins";
+    }
+
+    return "Fort Knox!!";
+  }
+
   render() {
-    const { playArea } = this.props;
+    const { playArea, highlight } = this.props;
     const { player, coins, cards } = playArea;
+    const coinDisplay = this.getCoinDisplay(highlight, coins);
     return (
       <div className="mb-2">
-        <Card>
-          <CardHeader>{player.name}<span className="float-right">{coins} Coin{coins === 1 ? "" : "s"}</span></CardHeader>
-          <CardBody className="d-flex overflow-auto">
+        <Card style={highlight ? {background: "#ffe8db"} : null}>
+          <CardHeader className="px-2 py-1">{player.name}<span className="float-right">{coinDisplay}</span></CardHeader>
+          <CardBody className="d-flex overflow-auto p-2" style={{minHeight: "4.5rem"}}>
             {cards
               .sort((a, b) => a.value - b.value)
               .map((c, i, array) => {
@@ -43,9 +64,9 @@ export default class PlayArea extends Component {
                       height: "3.5rem",
                       boxShadow: "inset 0 0 2rem rgba(0,0,0,0.3), 1px 1px 2px rgba(0,0,0,0.3)",
                       position: "relative",
-                      paddingRight: notGrouped 
-                        ? 0 
-                        : c.value > 10 
+                      paddingRight: notGrouped
+                        ? 0
+                        : c.value > 10
                           ? "2px"
                           : "7px",
                       left: this.getGroupingOffset(array, i),

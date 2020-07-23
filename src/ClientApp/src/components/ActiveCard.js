@@ -26,7 +26,7 @@ export default class ActiveCard extends Component {
             color: "white",
             top: Deck.initialDeckSize * Deck.cardThickness,
             left: 0,
-            boxShadow: "inset 0 0 5rem rgba(0,0,0,0.3), 1px 1px 3px black"
+            boxShadow: "inset 0 0 5rem rgba(0,0,0,0.3), 1px 1px 6px black"
           }}>
           <h1 style={{ fontSize: "5rem" }}>{value}</h1>
           <p>{coins} Coin{coins === 1 ? "" : "s"}</p>

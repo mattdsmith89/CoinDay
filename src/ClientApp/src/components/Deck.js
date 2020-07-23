@@ -22,7 +22,7 @@ export default class Deck extends Component {
         + `${grayShadow}px ${grayShadow}px 1px gray, `
     }
     const finalShadowOffset = Deck.cardThickness * cardsLeft + 1;
-    result += `inset 0 0 5rem rgba(0,0,0,0.3), ${finalShadowOffset}px ${finalShadowOffset}px 3px rgba(0,0,0,0.6)`;
+    result += `inset 0 0 5rem rgba(0,0,0,0.3), ${finalShadowOffset}px ${finalShadowOffset}px 6px rgba(0,0,0,0.6)`;
     return result;
   }
 
