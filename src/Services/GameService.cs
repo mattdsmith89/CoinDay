@@ -93,8 +93,8 @@ namespace CoinDay.Services
 
             switch (action)
             {
-                case ActionType.StartGame:
-                    game.StartGame();
+                case ActionType.ReadyUp:
+                    game.ToggleReady(playerId);
                     break;
                 case ActionType.AddCoin:
                     game.AddCoin(playerId);

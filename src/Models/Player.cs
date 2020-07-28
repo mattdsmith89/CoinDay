@@ -1,5 +1,4 @@
 using System;
-using System.Text.Json.Serialization;
 
 namespace CoinDay.Models
 {
@@ -16,9 +15,11 @@ namespace CoinDay.Models
             Name = name;
         }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public PlayerId Id { get; set; }
+        public PlayerId Id { get; }
+
+        public bool Ready { get; set; }
 
         public static implicit operator string(Player player) => player.Name;
 

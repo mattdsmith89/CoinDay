@@ -13,6 +13,7 @@ namespace CoinDay.Models
             {
                 Id = player.Id.ToString(),
                 Name = player.Name,
+                Ready = player.Ready,
             };
         }
 

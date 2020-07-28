@@ -14,7 +14,7 @@ export default class Game extends Component {
   }
 
   handleStart() {
-    this.postAction("StartGame");
+    this.postAction("ReadyUp");
   }
 
   handleAdd() {
@@ -58,6 +58,7 @@ export default class Game extends Component {
   render() {
     const { game, playerId } = this.props;
     const { players, playAreas } = game;
+    const thisPlayer = players.find(player => player.id === playerId);
 
     const table = (
       <div className="pt-3 d-flex justify-content-center">
@@ -72,9 +73,8 @@ export default class Game extends Component {
 
     const playerList = (
       <div>
-        <span>Players: </span>
         {players.map(player => (
-          <Badge key={player.id} className="mr-2" color={player.id === playerId ? "success" : "secondary"}>
+          <Badge key={player.id} className="mr-2 p-2" color={player.ready ? "success" : "dark"}>
             {player.name}
           </Badge>
         ))}
@@ -115,7 +115,7 @@ export default class Game extends Component {
           .map(playArea => (
             <PlayArea className="mb-2" playArea={playArea} key={playArea.player.id}></PlayArea>
           ))
-        : playerList}
+        : null}
     </div>);
 
     const myPlayer = (<div>
@@ -137,7 +137,18 @@ export default class Game extends Component {
         </div>
         <div>
           {game.state !== "InProgress"
-            ? <Button onClick={this.handleStart} disabled={game.players.length < 3}>Play!</Button>
+            ? (
+              <div className="d-flex flex-column">
+                <div className="d-flex justify-content-center mb-2">
+                  {playerList}
+                </div>
+                <div className="d-flex justify-content-center">
+                  <Button
+                    onClick={this.handleStart}
+                    disabled={game.players.length < 3}
+                    color={thisPlayer.ready ? "success" : "secondary"}>Ready!</Button>
+                </div>
+              </div>)
             : null}
         </div>
       </div>

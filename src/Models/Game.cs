@@ -71,24 +71,19 @@ namespace CoinDay.Models
             players.Add(player);
         }
 
-        public void StartGame()
+        public void ToggleReady(PlayerId playerId)
         {
             if (state == GameState.InProgress)
                 return;
-            if (players.Count < 3 || players.Count > 7)
-                return;
 
-            deck.Enqueue(Card.NewDeck().Shuffle().Take(24));
-            playAreas.Clear();
-            playOrder.Clear();
-            foreach (var player in players)
-            {
-                playAreas.Add(new PlayArea(player, players.Count));
-                playOrder.Add(player.Id);
-            }
-            playOrder.Shuffle();
-            turn = 0;
-            state = GameState.InProgress;
+            var player = players.FirstOrDefault(x => x.Id == playerId);
+            if (player is null)
+                return;
+            
+            player.Ready = !player.Ready;
+
+            if (players.All(x => x.Ready))
+                StartGame();
         }
 
         public void TakeCard(PlayerId playerId)
@@ -108,9 +103,7 @@ namespace CoinDay.Models
             playArea.TakeCard(card);
 
             if (state == GameState.InProgress && CurrentCard is null)
-            {
                 EndGame();
-            }
         }
 
         public void AddCoin(PlayerId playerId)
@@ -126,7 +119,32 @@ namespace CoinDay.Models
                 return;
 
             playArea.SpendCoin(CurrentCard);
+
             NextTurn();
+        }
+
+        private void StartGame()
+        {
+            if (state == GameState.InProgress)
+                return;
+            if (players.Count < 3 || players.Count > 7)
+                return;
+            if (!players.All(x => x.Ready))
+                return;
+
+            deck.Enqueue(Card.NewDeck().Shuffle().Take(24));
+            playAreas.Clear();
+            playOrder.Clear();
+
+            foreach (var player in players)
+            {
+                playAreas.Add(new PlayArea(player, players.Count));
+                playOrder.Add(player.Id);
+            }
+
+            playOrder.Shuffle();
+            turn = 0;
+            state = GameState.InProgress;
         }
 
         private void NextTurn()
@@ -137,6 +155,11 @@ namespace CoinDay.Models
         private void EndGame()
         {
             state = GameState.Finished;
+
+            foreach (var player in players)
+            {
+                player.Ready = false;
+            }
         }
     }
 }
