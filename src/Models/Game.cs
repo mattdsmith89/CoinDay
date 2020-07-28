@@ -10,6 +10,7 @@ namespace CoinDay.Models
         private readonly ISet<PlayArea> playAreas;
         private readonly ISet<PlayerId> playOrder;
         private readonly Queue<Card> deck;
+        private readonly Dictionary<Player, int> leaderboard;
         private GameState state;
         private int turn = 0;
 
@@ -24,6 +25,7 @@ namespace CoinDay.Models
             players = new HashSet<Player> { initial };
             playAreas = new HashSet<PlayArea>();
             playOrder = new HashSet<PlayerId>();
+            leaderboard = players.ToDictionary(x => x, x => 0);
         }
 
         public IEnumerable<Player> Players
@@ -48,6 +50,9 @@ namespace CoinDay.Models
 
         public GameId Id { get; }
 
+        public IReadOnlyDictionary<Player, int> Leaderboard 
+            => leaderboard;
+
         public static implicit operator string(Game game)
             => string.Join(", ", game.Players);
 
@@ -69,6 +74,7 @@ namespace CoinDay.Models
                 throw new InvalidOperationException("Player already in game");
 
             players.Add(player);
+            leaderboard.Add(player, 0);
         }
 
         public void ToggleReady(PlayerId playerId)
@@ -159,6 +165,15 @@ namespace CoinDay.Models
             foreach (var player in players)
             {
                 player.Ready = false;
+            }
+
+            var winners = playAreas
+                .Where(x => x.Score == playAreas.Min(x => x.Score))
+                .Select(x => x.Player);
+            
+            foreach (var winner in winners)
+            {
+                leaderboard[winner]++;
             }
         }
     }

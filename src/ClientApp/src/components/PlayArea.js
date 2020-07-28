@@ -66,7 +66,7 @@ export default class PlayArea extends Component {
                       position: "relative",
                       paddingRight: notGrouped
                         ? 0
-                        : c.value > 10
+                        : c.value > 9
                           ? "2px"
                           : "7px",
                       left: this.getGroupingOffset(array, i),

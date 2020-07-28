@@ -31,6 +31,11 @@ namespace CoinDay.Models
                 PlayAreas = game.PlayAreas.Select(ToApiObject),
                 CurrentCard = game.CurrentCard.ToApiObject(),
                 CurrentPlayer = game.CurrentPlayer.ToApiObject(),
+                Leaderboard = game.Leaderboard.Select(x => new 
+                {
+                    Name = x.Key.Name,
+                    Wins = x.Value,
+                }),
             };
         }
 

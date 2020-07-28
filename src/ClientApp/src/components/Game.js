@@ -55,6 +55,26 @@ export default class Game extends Component {
     )
   }
 
+  getGameOverMessage(winners) {
+    const { playerId } = this.props;
+    const names = winners.map(x => x.id === playerId ? "you" : x.name);
+    let winText = "";
+    if (names.length > 1) {
+      winText = names.slice(0, names.length - 1).join(", ");
+      winText += ` and ${names.slice(names.length - 1, names.length)[0]}`
+    } else {
+      winText = names[0];
+    }
+
+    if ((names.length === 1 && names[0] === "you") || names.length > 1) {
+      winText += " win!";
+    } else {
+      winText += " wins!";
+    }
+
+    return `Game over, ${winText}`;
+  }
+
   render() {
     const { game, playerId } = this.props;
     const { players, playAreas } = game;
@@ -73,25 +93,23 @@ export default class Game extends Component {
 
     const playerList = (
       <div>
-        {players.map(player => (
-          <Badge key={player.id} className="mr-2 p-2" color={player.ready ? "success" : "dark"}>
+        {players.map((player, index) => (
+          <Badge key={player.id} className={`${index !== 0 ? "ml-2" : ""} p-2`} color={player.ready ? "success" : "dark"}>
             {player.name}
           </Badge>
         ))}
       </div>);
 
-    const winningPlayer = playAreas.reduce((min, playArea) => min && min.score < playArea.score ? min : playArea, null);
+    const winningScore = Math.min(...playAreas.map(x => x.score));
+    const winners = playAreas.filter(x => x.score === winningScore).map(x => x.player);
+    const gameOverMessage = this.getGameOverMessage(winners);
     const finish = (
       <div>
-        <h3 className="mb-4">Game over, {
-          winningPlayer
-            ? (winningPlayer.player.id === playerId ? "you win!" : `${winningPlayer.player.name} wins!`)
-            : null
-        }</h3>
-        <table className="table mb-5">
+        <h3 className="mb-4">{gameOverMessage}</h3>
+        <table className="table mb-2">
           <thead className="thead-dark">
             <tr>
-              <th className="pl-4">Player</th>
+              <th className="pl-4"></th>
               <th className="text-right pr-4">Score</th>
             </tr>
           </thead>
@@ -124,6 +142,30 @@ export default class Game extends Component {
         : null}
     </div>);
 
+    const leaderboard = (<div>{
+      game.leaderboard.some(player => player.wins > 0)
+        ? (
+          <table className="table mt-5">
+            <thead>
+              <tr>
+                <th className="pl-4"></th>
+                <th className="text-right pr-4">Wins</th>
+              </tr>
+            </thead>
+            <tbody>
+              {game.leaderboard
+                .sort((a, b) => (a.wins < b.wins) ? 1 : (a.wins === b.wins) ? ((a.name > b.name) ? 1 : -1) : -1)
+                .map((player, index) => (
+                  <tr key={player.name}>
+                    <td className={`pl-4 ${index === 0 ? "font-weight-bold" : ""}`}>{player.name}</td>
+                    <td className={`text-right pr-4 ${index === 0 ? "font-weight-bold" : ""}`}>{player.wins}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>)
+        : null
+    }</div>);
+
     return (
       <div>
         <div className="pb-3">
@@ -133,12 +175,9 @@ export default class Game extends Component {
         <div className="my-3">{game.state === "InProgress" ? actions : null}</div>
         <div>{game.state === "Finished" ? finish : null}</div>
         <div>
-          {myPlayer}
-        </div>
-        <div>
           {game.state !== "InProgress"
             ? (
-              <div className="d-flex flex-column">
+              <div className="d-flex flex-column mb-2">
                 <div className="d-flex justify-content-center mb-2">
                   {playerList}
                 </div>
@@ -150,6 +189,12 @@ export default class Game extends Component {
                 </div>
               </div>)
             : null}
+        </div>
+        <div>
+          {myPlayer}
+        </div>
+        <div>
+          {leaderboard}
         </div>
       </div>
     )
