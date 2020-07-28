@@ -83,19 +83,23 @@ export default class Game extends Component {
     const winningPlayer = playAreas.reduce((min, playArea) => min && min.score < playArea.score ? min : playArea, null);
     const finish = (
       <div>
-        <h3 className="mb-4">Game over, {winningPlayer ? winningPlayer.player.name : null} wins!</h3>
+        <h3 className="mb-4">Game over, {
+          winningPlayer
+            ? (winningPlayer.player.id === playerId ? "you win!" : `${winningPlayer.player.name} wins!`)
+            : null
+        }</h3>
         <table className="table mb-5">
           <thead className="thead-dark">
             <tr>
-              <th>Player</th>
-              <th>Score</th>
+              <th className="pl-4">Player</th>
+              <th className="text-right pr-4">Score</th>
             </tr>
           </thead>
           <tbody>
-            {playAreas.sort((a, b) => a.score - b.score).map(playArea => (
+            {playAreas.sort((a, b) => a.score - b.score).map((playArea, index) => (
               <tr key={playArea.player.id}>
-                <td>{playArea.player.name}</td>
-                <td>{playArea.score}</td>
+                <td className={`pl-4 ${index === 0 ? "font-weight-bold" : ""}`}>{playArea.player.name}</td>
+                <td className={`text-right pr-4 ${index === 0 ? "font-weight-bold" : ""}`}>{playArea.score}</td>
               </tr>
             ))}
           </tbody>
@@ -107,7 +111,7 @@ export default class Game extends Component {
       {game.playAreas && game.playAreas.length
         ? game.playAreas
           .filter(playArea => playArea.player.id !== playerId)
-          .sort((a, b) => a.player.name - b.player.name)
+          .sort((a, b) => (a.player.name > b.player.name) ? 1 : -1)
           .map(playArea => (
             <PlayArea className="mb-2" playArea={playArea} key={playArea.player.id}></PlayArea>
           ))
