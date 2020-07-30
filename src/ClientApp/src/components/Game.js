@@ -106,7 +106,7 @@ export default class Game extends Component {
     const finish = (
       <div>
         <h3 className="mb-4">{gameOverMessage}</h3>
-        <table className="table mb-2">
+        <table className="table mb-4">
           <thead className="thead-dark">
             <tr>
               <th className="pl-4"></th>
@@ -168,16 +168,16 @@ export default class Game extends Component {
 
     return (
       <div>
+        <div>{game.state === "Finished" ? finish : null}</div>
         <div className="pb-3">
           {otherPlayers}
         </div>
         <div>{game.state === "InProgress" ? table : null}</div>
         <div className="my-3">{game.state === "InProgress" ? actions : null}</div>
-        <div>{game.state === "Finished" ? finish : null}</div>
         <div>
           {game.state !== "InProgress"
             ? (
-              <div className="d-flex flex-column mb-2">
+              <div className="d-flex flex-column mb-4">
                 <div className="d-flex justify-content-center mb-2">
                   {playerList}
                 </div>
