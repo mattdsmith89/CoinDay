@@ -142,13 +142,12 @@ namespace CoinDay.Models
             playAreas.Clear();
             playOrder.Clear();
 
-            foreach (var player in players)
+            foreach (var player in players.Shuffle())
             {
                 playAreas.Add(new PlayArea(player, players.Count));
                 playOrder.Add(player.Id);
             }
 
-            playOrder.Shuffle();
             turn = 0;
             state = GameState.InProgress;
         }
