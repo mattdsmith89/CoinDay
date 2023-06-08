@@ -32,7 +32,9 @@ jobs:
           username: $GITHUB_ACTOR
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: push
-        run: docker push ghcr.io/mattdsmith89/coinday/coinday
+        run: |
+          docker push ghcr.io/mattdsmith89/coinday/coinday:latest
+          docker push ghcr.io/mattdsmith89/coinday/coinday:${{ steps.vars.outputs.sha_short }}
     outputs:
       sha_short: ${{ steps.vars.outputs.sha_short }}
 
