@@ -1,0 +1,18 @@
+name: pr_build
+
+on: 
+  pull_request:
+    branches:
+      - main
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: build
+        run: |
+          docker build ./src --file src/Dockerfile
