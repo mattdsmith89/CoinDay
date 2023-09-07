@@ -233,3 +233,4 @@ _Pvt_Extensions
 
 # Mac OS
 **/.DS_Store
+/ClientApp/node_modules
