@@ -126,10 +126,10 @@ export default class Game extends Component {
     )
 
     const otherPlayers = (<div>
-      {game.playAreas && game.playAreas.length
+      {game.playAreas && game.playAreas.length && game.playOrder && game.playOrder.length
         ? game.playAreas
           .filter(playArea => playArea.player.id !== playerId)
-          .sort((a, b) => (a.player.name > b.player.name) ? 1 : -1)
+          .sort((a, b) => game.playOrder.indexOf(a.player.id) - game.playOrder.indexOf(b.player.id))
           .map(playArea => (
             <PlayArea className="mb-2" playArea={playArea} key={playArea.player.id}></PlayArea>
           ))

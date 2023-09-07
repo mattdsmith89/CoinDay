@@ -29,6 +29,7 @@ namespace CoinDay.Models
                 State = game.State.ToString(),
                 Players = game.Players.Select(ToApiObject),
                 PlayAreas = game.PlayAreas.Select(ToApiObject),
+                PlayOrder = game.PlayOrder.Select(x => x.ToString()),
                 CurrentCard = game.CurrentCard.ToApiObject(),
                 CurrentPlayer = game.CurrentPlayer.ToApiObject(),
                 Leaderboard = game.Leaderboard.Select(x => new 

@@ -34,6 +34,9 @@ namespace CoinDay.Models
         public IEnumerable<PlayArea> PlayAreas
             => playAreas;
 
+        public IEnumerable<PlayerId> PlayOrder
+            => playOrder;
+
         public Card CurrentCard
             => deck.Count > 0 ? deck.Peek() : null;
 
